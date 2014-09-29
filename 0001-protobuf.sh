@@ -6,6 +6,8 @@ VER="2.5.0"
 PKG=protobuf-${VER}
 TGZ=${PKG}.tar.gz
 URL=https://protobuf.googlecode.com/files/${TGZ}
+SHA1=sha1sum
+MD5=md5sum
 GPG=gpg
 
 SHASUM=7f6ea7bc1382202fb1ce8c6933f1ef8fea0c0148
@@ -61,12 +63,10 @@ import com.google.protobuf.*;/g'
     exts=( "" "-sources" "-javadoc" )
     for ext in "${exts[@]}"
     do
-      md5sum protobuf-java-2.5.0-spark$ext.jar | awk '{ print $1; }' \
-        > protobuf-java-2.5.0-spark$ext.jar.md5
-      sha1sum protobuf-java-2.5.0-spark-sources.jar | awk '{ print $1; }' \
-        > protobuf-java-2.5.0-spark$ext.jar.sha1
-      $GPG --output protobuf-java-2.5.0-spark$ext.jar.asc \
-        --detach-sig --armour protobuf-java-2.5.0-spark$ext.jar
+      filename=protobuf-java-2.5.0-spark$ext.jar
+      $MD5 $filename | awk '{ print $1; }' > $filename.md5
+      $SHA1 $filename | awk '{ print $1; }' > $filename.sha1
+      $GPG --output $filename.asc --detach-sig --armour $filename
     cp ../pom.xml .
     $GPG --output pom.xml.asc --detach-sig --armour pom.xml
     jar cvf protobuf-java-2.5.0-spark-bundle.jar *.md5 *.jar *.asc pom.xml
